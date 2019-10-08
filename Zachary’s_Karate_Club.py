@@ -11,17 +11,69 @@
 import numpy as np
 from networkx import karate_club_graph, to_numpy_matrix
 
-zkc = karate_club_graph()                                                       # zkc:数据集
+zkc = karate_club_graph()                                                       # zkc: 数据集
 order = sorted(list(zkc.nodes()))                                               # 排序
 # print(sorted(list(zkc.nodes())))
 
 """
-    to_numpy_matrix(G, nodelist=None, dtype=None, order=None, multigraph_weight=<built-in function sum>, weight='weight')
-    功能：以NumPy矩阵的形式返回图邻接矩阵。
+    函数原型：to_numpy_matrix(G, nodelist=None, dtype=None, order=None, multigraph_weight=<built-in function sum>, weight='weight')
+    功能：以NumPy矩阵的形式返回图邻接矩阵。 
 """
-A = to_numpy_matrix(zkc, nodelist=order)                                        #
-I = np.eye(zkc.number_of_nodes())
-print(A)
-print(zkc.number_of_nodes())
-print(I)
+A = to_numpy_matrix(zkc, nodelist=order)                                        # A: 数据集zkc的邻接矩阵
+I = np.eye(zkc.number_of_nodes())                                               # I：单位矩阵
+# print(A)
+# print(zkc.number_of_nodes())
+# print(I)
 
+A_hat = A+I                                                                     # A_hat: 加入自环后的邻接矩阵
+D_hat = np.array(np.sum(A_hat, axis=0))[0]                                      # D_hat: 度序列
+'''np.array()[0]的目的在于结果多一个中括号，去掉中括号'''
+D_hat = np.matrix(np.diag(D_hat))                                               # D_hat: 度矩阵
+# print(D_hat)
+
+"""
+    函数原型：numpy.random.normal(loc=0.0, scale=1.0, size=None)
+    参数：
+        loc：float
+            此概率分布的均值（对应着整个分布的中心centre）
+        scale：float
+            此概率分布的标准差（对应于分布的宽度，scale越大越矮胖，scale越小，越瘦高）
+        size：int or tuple of ints
+            输出的shape，默认为None，只输出一个值
+"""
+W_1 = np.random.normal(loc=0,
+                       scale=1,
+                       size=(zkc.number_of_nodes(), 4))
+W_2 = np.random.normal(loc=0,
+                       size=(W_1.shape[1], 2))
+# print(W_1)
+# print(W_2)
+
+
+def relu(x):
+    s = np.where(x < 0, 0, x)
+    return s
+
+
+# """
+#     @name: gcn_layer
+#     功能：添加隐藏层
+#     参数:
+#         A_hat: 邻接矩阵
+#         D_hat: 度矩阵
+#         X: 特征矩阵
+#         W: 权重矩阵
+# """
+def gcn_layer(A_hat, D_hat, X, W):
+    return relu(D_hat**-1 * A_hat * X * W)
+
+
+H_1 = gcn_layer(A_hat, D_hat, I, W_1)
+H_2 = gcn_layer(A_hat, D_hat, H_1, W_2)
+
+output = H_2
+
+feature_representation = {
+    node: np.array(output)[node]
+    for node in zkc.nodes
+}
