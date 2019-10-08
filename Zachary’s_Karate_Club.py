@@ -9,7 +9,9 @@
 
 
 import numpy as np
+import matplotlib.pyplot as plt
 from networkx import karate_club_graph, to_numpy_matrix
+
 
 zkc = karate_club_graph()                                                       # zkc: 数据集
 order = sorted(list(zkc.nodes()))                                               # 排序
@@ -41,10 +43,10 @@ D_hat = np.matrix(np.diag(D_hat))                                               
         size：int or tuple of ints
             输出的shape，默认为None，只输出一个值
 """
-W_1 = np.random.normal(loc=0,
+W_1 = np.random.normal(loc=0,                                                   # W_1: 随机权重
                        scale=1,
                        size=(zkc.number_of_nodes(), 4))
-W_2 = np.random.normal(loc=0,
+W_2 = np.random.normal(loc=0,                                                   # W_1: 随机权重
                        size=(W_1.shape[1], 2))
 # print(W_1)
 # print(W_2)
@@ -68,8 +70,8 @@ def gcn_layer(A_hat, D_hat, X, W):
     return relu(D_hat**-1 * A_hat * X * W)
 
 
-H_1 = gcn_layer(A_hat, D_hat, I, W_1)
-H_2 = gcn_layer(A_hat, D_hat, H_1, W_2)
+H_1 = gcn_layer(A_hat, D_hat, I, W_1)                                           # 第一层掩藏层
+H_2 = gcn_layer(A_hat, D_hat, H_1, W_2)                                         # 第二层隐藏层
 
 output = H_2
 
@@ -77,3 +79,16 @@ feature_representation = {
     node: np.array(output)[node]
     for node in zkc.nodes
 }
+# print(feature_representation)
+# print(feature_representation.get(0))
+
+fig = plt.figure()                                                              # 创建画布
+ax1 = fig.add_subplot(111)                                                      # 创建子图
+for i in feature_representation.keys():
+    # print(i)
+    x = feature_representation.get(i)[0]                                        # x: x坐标值
+    y = feature_representation.get(i)[1]                                        # y: y坐标值
+    # print(x,y)
+    ax1.scatter(x, y, c='r', marker='o')
+
+plt.show()                                                                      # 画图
