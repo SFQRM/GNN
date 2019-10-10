@@ -12,10 +12,20 @@ def exponentiation(matrix):
     v, P = la.eig(matrix)                                       # v:特征值，P:特征向量
     # print(v)
     # print(P)
-    V = np.diag(v**(0.5))                                       # V:特征值1/2幂运算之后，再矩阵化
+    V = np.diag(v**(1/2))                                       # V:特征值1/2幂运算之后，再矩阵化
     B = P**-1 * V * P                                           # B = A^(0.5)
     # print(B)
     return B**-1                                                # 返回结果:A^(-0.5)
+
+
+def exponentiation1(matrix):
+    v, P = la.eig(matrix)                                       # v:特征值，P:特征向量
+    # print(v)
+    # print(P)
+    V = np.diag(v**(-1/2))                                      # V:特征值1/2幂运算之后，再矩阵化
+    B = P * V * P**-1                                           # B = A^(0.5)
+    # print(B)
+    return B                                                    # 返回结果:A^(-0.5)
 
 
 A = np.matrix([                                                 # A:邻接矩阵
@@ -43,14 +53,25 @@ I = np.matrix(np.eye(A.shape[0]))                               # I:单位矩阵
 A_hat = A+I                                                     # 对邻接矩阵加一个单位矩阵
 # print(A_hat)
 
-D = np.array(np.sum(A_hat, axis=0))[0]                          # D:A_hat的度序列
-D = np.matrix(np.diag(D))                                       # D:A_hat的（入）度矩阵
+D = np.array(np.sum(A, axis=0))[0]                              # D:A的度序列
+D = np.matrix(np.diag(D))                                       # D:A的（入）度矩阵
+# print("A的（入）度矩阵：\n", D)
+# print(D**-1)
+# print(D**-1 * A * X)
+
+# D_ = np.array(np.sum(A_hat, axis=0))[0]                         # D:A_hat的度序列
+# D_ = np.matrix(np.diag(D_))                                     # D:A_hat的（入）度矩阵
 # print("A_hat的（入）度矩阵：\n", D)
 D_hat = exponentiation(D)                                       # D_hat:D^(-0.5)
+# D_hat1 = exponentiation1(D)                                     # D_hat:D^(-0.5)
 # print(D_hat)
+# print(D_hat1)
 
-hideLayer1 = A_hat*X                                            # hideLayer0: 隐藏层
-print("Part1隐藏层:\n", hideLayer1)
+hideLayer1 = A*X                                                # hideLayer1: 隐藏层
+print("Rule 1隐藏层:\n", hideLayer1)
 
-hideLayer2 = D_hat * A_hat * D_hat * X                          # hideLayer1: 隐藏层
-print("Part2隐藏层:\n", hideLayer2)
+hideLayer2 = D**-1 * A * X                                      # hideLayer1: 隐藏层
+print("Rule 2隐藏层:\n", hideLayer2)
+
+hideLayer3 = D_hat * A * D_hat * X                          # hideLayer3: 隐藏层
+print("Rule 3隐藏层:\n", hideLayer3)
