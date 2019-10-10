@@ -1,9 +1,15 @@
+# @author: SFQRM
+# first edit time: 2019.10.10
+# function:
+#     EN:
+#       https://towardsdatascience.com/how-to-do-deep-learning-on-graphs-with-graph-convolutional-networks-62acf5b143d0
+
 import numpy as np
 from numpy import linalg as la
 
 
 def exponentiation(matrix):
-    v, P = la.eig(matrix)                                            # v:特征值，P:特征向量
+    v, P = la.eig(matrix)                                       # v:特征值，P:特征向量
     # print(v)
     # print(P)
     V = np.diag(v**(0.5))                                       # V:特征值1/2幂运算之后，再矩阵化
