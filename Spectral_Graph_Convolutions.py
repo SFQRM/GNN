@@ -73,5 +73,5 @@ print("Rule 1隐藏层:\n", hideLayer1)
 hideLayer2 = D**-1 * A * X                                      # hideLayer1: 隐藏层
 print("Rule 2隐藏层:\n", hideLayer2)
 
-hideLayer3 = D_hat * A * D_hat * X                          # hideLayer3: 隐藏层
+hideLayer3 = D_hat * A * D_hat * X                              # hideLayer3: 隐藏层
 print("Rule 3隐藏层:\n", hideLayer3)
